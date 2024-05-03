@@ -11,8 +11,8 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}/index.mjs",
-            "envFile": "${workspaceFolder}/.envrc"
+            "program": "${workspaceFolder}/backend/index.mjs",
+            "envFile": "${workspaceFolder}/backend/.envrc"
         }
     ]
 }
