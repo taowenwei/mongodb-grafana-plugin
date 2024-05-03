@@ -1,0 +1,1 @@
+# mongodb-grafana-plugin
