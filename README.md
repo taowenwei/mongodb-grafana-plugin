@@ -52,4 +52,11 @@ the `aggregations` field can have multiple aggregations. the supported data type
 
 - `$from`, `$to`, `$intervalMs` are grafana expandable variables for using as a time boundary and an interval
 - `__name`, `__value`, `__timestamp` are the plugin's internal variables to construct a grafana timeserie data frame
-- example query can be found at [code](./sample/timeserie-query.json). all 6 parameters mentioned above are used.
+- an example query can be found at [code](./sample/timeserie-query.json). all 6 parameters mentioned above are used. it `$group` by month and `$sum` how many movies were released during a month.
+
+## sample dashboard
+
+an example dashboard can be found at [here](./sample/dashboard.json)
+
+
+<img src="./imgs/dashboard.png" alt="frontend"/>
