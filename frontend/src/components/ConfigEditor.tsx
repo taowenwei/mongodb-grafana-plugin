@@ -1,5 +1,5 @@
 import React, { ChangeEvent } from 'react';
-import { InlineField, Input, SecretInput } from '@grafana/ui';
+import { InlineField, Input } from '@grafana/ui';
 import { DataSourcePluginOptionsEditorProps } from '@grafana/data';
 import { MyDataSourceOptions, MySecureJsonData } from '../types';
 
@@ -7,63 +7,49 @@ interface Props extends DataSourcePluginOptionsEditorProps<MyDataSourceOptions, 
 
 export function ConfigEditor(props: Props) {
   const { onOptionsChange, options } = props;
-  const { jsonData, secureJsonFields, secureJsonData } = options;
-
-  const onPathChange = (event: ChangeEvent<HTMLInputElement>) => {
-    onOptionsChange({
-      ...options,
-      jsonData: {
-        ...jsonData,
-        path: event.target.value,
-      },
-    });
-  };
 
   // Secure field (only sent to the backend)
-  const onAPIKeyChange = (event: ChangeEvent<HTMLInputElement>) => {
-    onOptionsChange({
-      ...options,
-      secureJsonData: {
-        apiKey: event.target.value,
-      },
-    });
-  };
-
-  const onResetAPIKey = () => {
-    onOptionsChange({
-      ...options,
-      secureJsonFields: {
-        ...options.secureJsonFields,
-        apiKey: false,
-      },
-      secureJsonData: {
-        ...options.secureJsonData,
-        apiKey: '',
-      },
-    });
+  const onFieldChanged = (event: ChangeEvent<HTMLInputElement>, field: string) => {
+    const jsonData = {
+      ...options.jsonData,
+      [field]: event.target.value,
+    };
+    onOptionsChange({ ...options, jsonData });
   };
 
   return (
     <>
-      <InlineField label="Path" labelWidth={14} interactive tooltip={'Json field returned to frontend'}>
+      <InlineField label="mongodb connection string" labelWidth={30} interactive tooltip={'mongodb connection string'}>
         <Input
-          id="config-editor-path"
-          onChange={onPathChange}
-          value={jsonData.path}
-          placeholder="Enter the path, e.g. /api/v1"
-          width={40}
-        />
-      </InlineField>
-      <InlineField label="API Key" labelWidth={14} interactive tooltip={'Secure json field (backend only)'}>
-        <SecretInput
           required
           id="config-editor-api-key"
-          isConfigured={secureJsonFields.apiKey}
-          value={secureJsonData?.apiKey}
-          placeholder="Enter your API key"
+          value={options.jsonData?.mongoConnString}
+          placeholder="mongodb+srv://[username:password@]host[/[defaultauthdb][?options]]"
           width={40}
-          onReset={onResetAPIKey}
-          onChange={onAPIKeyChange}
+          onReset={() => {}}
+          onChange={(event: ChangeEvent<HTMLInputElement>) => onFieldChanged(event, 'mongoConnString')}
+        />
+      </InlineField>
+      <InlineField label="mongodb database name" labelWidth={30} interactive tooltip={'mongodb database name'}>
+        <Input
+          required
+          id="config-editor-api-key"
+          value={options.jsonData?.databaseName}
+          placeholder="dbname"
+          width={40}
+          onReset={() => {}}
+          onChange={(event: ChangeEvent<HTMLInputElement>) => onFieldChanged(event, 'databaseName')}
+        />
+      </InlineField>
+      <InlineField label="backend url" labelWidth={30} interactive tooltip={'mongodb plugin backend url'}>
+        <Input
+          required
+          id="config-editor-api-key"
+          value={options.jsonData?.backendUri}
+          placeholder="http://localhost:4000"
+          width={40}
+          onReset={() => {}}
+          onChange={(event: ChangeEvent<HTMLInputElement>) => onFieldChanged(event, 'backendUri')}
         />
       </InlineField>
     </>

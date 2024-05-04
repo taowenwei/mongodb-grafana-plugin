@@ -13,12 +13,22 @@ import { MyQuery, MyDataSourceOptions, DEFAULT_QUERY, DataSourceResponse } from 
 import { lastValueFrom } from 'rxjs';
 import _ from 'lodash';
 
+interface PluginConfigs {
+  url: string;
+  db: string;
+}
+
 export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
   baseUrl: string;
+  db: PluginConfigs;
 
   constructor(instanceSettings: DataSourceInstanceSettings<MyDataSourceOptions>) {
     super(instanceSettings);
-    this.baseUrl = instanceSettings.url!;
+    this.baseUrl = instanceSettings.jsonData.backendUri;
+    this.db = {
+      url: instanceSettings.jsonData.mongoConnString,
+      db: instanceSettings.jsonData.databaseName,
+    };
   }
 
   getDefaultQuery(_: CoreApp): Partial<MyQuery> {
@@ -49,9 +59,14 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
     return { data };
   }
 
-  async request(url: string, params?: string) {
+  async request(url: string, body: object) {
     const response = getBackendSrv().fetch<DataSourceResponse>({
-      url: `${this.baseUrl}${url}${params?.length ? `?${params}` : ''}`,
+      url: `${this.baseUrl}${url}`,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      data: JSON.stringify(body),
     });
     return lastValueFrom(response);
   }
@@ -63,7 +78,7 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
     const defaultErrorMessage = 'Cannot connect to API';
 
     try {
-      const response = await this.request('/health');
+      const response = await this.request('/', { db: this.db });
       if (response.status === 200) {
         return {
           status: 'success',

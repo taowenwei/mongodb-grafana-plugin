@@ -2,14 +2,16 @@ import express from "express";
 import { MongoClient } from "mongodb";
 import * as Query from "./query.mjs";
 import * as Mongo from "./mongo.mjs";
+import cors from 'cors';
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 // grafana: test datasource connect
 app.all("/", async (req, res) => {
-  const client = new MongoClient(req.body.db.url);
   try {
+    const client = new MongoClient(req.body.db.url);
     await client.connect();
     res.send({
       status: "success",

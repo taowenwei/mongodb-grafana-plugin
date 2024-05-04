@@ -9,6 +9,6 @@ datasources:
     version: 1
     editable: true
     jsonData:
-      path: '/resources'
+      dummy: 'tbd'
     secureJsonData:
-      apiKey: 'api-key'
+      dummy: 'tbd'

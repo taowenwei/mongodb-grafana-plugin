@@ -54,8 +54,10 @@ open the repo from visual studio code. the backend is in the `backend` folder. i
 
 7. save the database connection
 
-go back to setp 5, click on the `Save & test` button
+go back to setp 5, click on the `Save & test` button. 
+
+<img src="./imgs/config-done.png" alt="plugin" style="zoom: 50%;" />
 
 hurray! you have everything set up.
 
-** query
+## query
