@@ -10,20 +10,27 @@ export function QueryEditor({ query, onChange, onRunQuery }: Props) {
   const { queryText, queryType } = query;
 
   return (
-    <Stack gap={0}>
-      <InlineField label="Query Text" labelWidth={16} tooltip="Not used yet">
+    <Stack gap={0} direction="column">
+      <InlineField label="Type" labelWidth={16} tooltip="Not used yet">
         <Select
-          options={[{ value: QueryType.table }, { value: QueryType.timeserie }]}
+          width={20}
+          options={[
+            { label: QueryType.table, value: QueryType.table },
+            { label: QueryType.timeserie, value: QueryType.timeserie },
+          ]}
           value={queryType}
           onChange={(sv) => onChange({ ...query, queryType: sv.value!! })}
         />
       </InlineField>
       <InlineField label="Query Text" labelWidth={16} tooltip="Not used yet">
         <TextArea
-          id="query-editor-query-text"
+          style={{ width: 500 }}
           value={queryText ?? ''}
           required
           placeholder="db.[collection name].aggregate([...])"
+          onChange={(event) => {
+            onChange({ ...query, queryText: event.currentTarget.value });
+          }}
           onBlur={(event) => {
             onChange({ ...query, queryText: event.target.value });
             onRunQuery();

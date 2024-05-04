@@ -1,4 +1,4 @@
-export const buildSubstitution = () => {
+export const buildSubstitution = (req) => {
   const getBucketCount = (from, to, intervalMs) => {
     const current = new Date(from).getTime();
     const toMs = new Date(to).getTime();
