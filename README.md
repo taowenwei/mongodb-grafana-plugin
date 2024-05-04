@@ -60,3 +60,6 @@ an example dashboard can be found at [here](./sample/dashboard.json)
 
 
 <img src="./imgs/dashboard.png" alt="frontend"/>
+
+## contribution
+you're welcomed to contribute to the repo in any way.
