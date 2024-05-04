@@ -1,0 +1,199 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 2,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "mongodb-grafana-datasource",
+        "uid": "fdkn0wi0apkw0c"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "mongodb-grafana-datasource",
+            "uid": "fdkn0wi0apkw0c"
+          },
+          "queryText": "{\n  collection: \"movies\",\n  aggregations: [\n    {\n      $match: {\n        released: {\n          $gte: new Date($from),\n          $lte: new Date($to),\n        },\n      },\n    },\n    {\n      $group: {\n        _id: {\n          year: {\n            $year: \"$released\",\n          },\n          month: {\n            $month: \"$released\",\n          },\n        },\n        __value: {\n          $sum: 1,\n        },\n      },\n    },\n    {\n      $addFields: {\n        __name: { $literal: \"movies in month\" },\n        __timestamp: {\n          $dateFromString: {\n            dateString: {\n              $concat: [\n                {\n                  $toString: \"$_id.year\",\n                },\n                \"-\",\n                {\n                  $toString: {\n                    $cond: {\n                      if: {\n                        $lte: [\"$_id.month\", 9],\n                      },\n                      then: \"0\",\n                      else: \"\",\n                    },\n                  },\n                },\n                {\n                  $toString: \"$_id.month\",\n                },\n                \"-01\",\n              ],\n            },\n            format: \"%Y-%m-%d\",\n          },\n        },\n      },\n    },\n    {\n      $sort: {\n        __timestamp: 1,\n      },\n    },\n    {\n      $project: {\n        _id: 0,\n      },\n    },\n  ],\n}",
+          "queryType": "timeserie",
+          "refId": "A"
+        }
+      ],
+      "title": "Panel Title",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "mongodb-grafana-datasource",
+        "uid": "fdkn0wi0apkw0c"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 8
+      },
+      "id": 1,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": ["sum"],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "10.4.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mongodb-grafana-datasource",
+            "uid": "fdkn0wi0apkw0c"
+          },
+          "queryText": "{\n  collection: \"movies\",\n  aggregations: [\n    {\n      '$match': {\n        'released': {\n          '$gte': new Date('Sat, 01 Jan 2000 00:00:00 GMT'), \n          '$lte': new Date('Tue, 01 Jan 2002 00:00:00 GMT')\n        }\n      }\n    }, {\n      '$project': {\n        'title': 1, \n        'year': 1, \n        'plot': 1\n      }\n    }\n  ]\n}",
+          "queryType": "table",
+          "refId": "A"
+        }
+      ],
+      "title": "Panel Title",
+      "type": "table"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 39,
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "2000-01-01T08:00:00.000Z",
+    "to": "2016-01-02T07:59:59.000Z"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "mflix",
+  "uid": "bdkpj0btmpr7kc",
+  "version": 9,
+  "weekStart": ""
+}
