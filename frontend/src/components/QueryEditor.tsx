@@ -6,6 +6,22 @@ import { MyDataSourceOptions, MyQuery, QueryType } from '../types';
 
 type Props = QueryEditorProps<DataSource, MyQuery, MyDataSourceOptions>;
 
+const queryHint = `{
+  collection: "collection name",
+  aggregations: [
+    {
+      string: "string",
+      date: new Date(),
+      id: new ObjectId("573a1393f29313caabcdc50e"),
+      bool: true,
+      float: 12345.4,
+      expandable1: $from,
+      expandable2: $to,
+      expandable3: $intervalMs
+    },
+  ],
+}`;
+
 export function QueryEditor({ query, onChange, onRunQuery }: Props) {
   const { queryText, queryType } = query;
 
@@ -24,10 +40,9 @@ export function QueryEditor({ query, onChange, onRunQuery }: Props) {
       </InlineField>
       <InlineField label="Query Text" labelWidth={16} tooltip="Not used yet">
         <TextArea
-          style={{ width: 500 }}
+          style={{ width: 500, minHeight:200 }}
           value={queryText ?? ''}
-          required
-          placeholder="db.[collection name].aggregate([...])"
+          placeholder={queryHint}
           onChange={(event) => {
             onChange({ ...query, queryText: event.currentTarget.value });
           }}

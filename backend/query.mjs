@@ -7,7 +7,7 @@ export const parseQuery = (req, target) => {
       intervalMs,
     },
   } = req;
-  const { target: query, type } = target;
+  const { queryText, queryType} = target;
   const $from = new Date(from);
   const $to = new Date(to);
   const $intervalMs = intervalMs;
@@ -18,10 +18,13 @@ export const parseQuery = (req, target) => {
     return (toMs - current) / intervalMs;
   };
 
+  if (!queryText || !queryType ) {
+    return [];
+  }
   // expected query format
-  // const queryFromGrafana = {
+  // cqueryType = table | timeserie
+  // queryText = {
   //   collection: "collection name",
-  //   type: "table or timeserie",
   //   aggregations: [
   //     {
   //       string: "string",
@@ -35,10 +38,10 @@ export const parseQuery = (req, target) => {
   //     },
   //   ],
   // };
-  const jsObject = eval(`(${query})`);
+  const jsObject = eval(`(${queryText})`);
   const { collection, aggregations } = jsObject;
   if (!collection || !aggregations) {
     throw new Error("invalid format. check query placeholder for example");
   }
-  return jsObject;
+  return {...jsObject, type: queryType};
 };

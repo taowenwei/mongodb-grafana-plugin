@@ -17,23 +17,17 @@ const buildTimeseries = (docs) => {
 
 const buildTable = (docs) => {
   // build superset of columns
-  const columns = {};
+  const columns = new Set();
   for (const doc of docs) {
     const keys = Object.keys(doc);
-    keys.forEach(
-      (key) =>
-        (columns[key] = {
-          text: key,
-          type: "text",
-        })
-    );
+    keys.forEach((key) => columns.add(key));
   }
 
   // build return rows
   const rows = [];
   for (const doc of docs) {
     const row = [];
-    const keys = Object.keys(columns);
+    const keys = [...columns];
     keys.forEach((key) => {
       if (key in doc) {
         row.push(doc[key]);
@@ -45,7 +39,7 @@ const buildTable = (docs) => {
   }
 
   return {
-    columns: Object.values(columns),
+    columns: [...columns],
     rows: rows,
     type: "table",
   };
@@ -58,12 +52,11 @@ export const aggregate = async (uri, dbName, queryArgs) => {
     client = new MongoClient(uri);
     await client.connect();
     const db = client.db(dbName);
-    const collection = db.collection(queryArgs.collection);
+    const { collection: cname, aggregations, type } = queryArgs;
+    const collection = db.collection(cname);
 
-    const docs = await collection
-      .aggregate(queryArgs.pipeline, queryArgs.agg_options)
-      .toArray();
-    switch (queryArgs.type) {
+    const docs = await collection.aggregate(aggregations).toArray();
+    switch (type) {
       case "timeserie":
         return buildTimeseries(docs);
       case "table":

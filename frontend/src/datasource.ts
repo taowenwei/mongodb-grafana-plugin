@@ -28,7 +28,7 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
   defaultErrorMessage = 'unknown error';
 
   constructor(
-    instanceSettings: DataSourceInstanceSettings<MyDataSourceOptions>
+    instanceSettings: DataSourceInstanceSettings<MyDataSourceOptions>,
   ) {
     super(instanceSettings);
     this.baseUrl = instanceSettings.jsonData.backendUri;
@@ -51,9 +51,13 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
   }
 
   async query(options: DataQueryRequest<MyQuery>): Promise<DataQueryResponse> {
-    options.targets = options.targets.filter((target) => !target.queryType);
     try {
-      const response = (await this.request('/query', options)) as FetchResponse<
+      const payload = {
+        ...options,
+        db: {...this.db},
+        targets: options.targets.filter((target) => !!target.queryType),
+      };
+      const response = (await this.request('/query', payload)) as FetchResponse<
         TimeSeriesResponse[] | TableResponse[]
       >;
       const data = response.data;
@@ -80,7 +84,7 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
                     targetData.columns.map((col, index) => [
                       col,
                       (row as object[])[index],
-                    ])
+                    ]),
                   ),
                 };
                 return dataFrame;
@@ -107,7 +111,7 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
 
   async request(
     url: string,
-    body: object
+    body: object,
   ): Promise<
     FetchResponse<TimeSeriesResponse[] | TableResponse[] | ConnectionResponse>
   > {
