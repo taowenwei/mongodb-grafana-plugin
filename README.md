@@ -13,7 +13,7 @@ this repo tries to modernize the good work from the [mongodb-grafana](https://gi
 
 3. copy the `frontend` folder to the installed grafana
 
-<img src="./imgs/frontend-install.png" alt="frontend" style="zoom: 40%;" />
+<img src="./imgs/frontend-install.png" alt="frontend" style="width: 40%;" />
 
 build the frontend
 ```bash
@@ -22,7 +22,7 @@ npm install
 npm run dev
 ```
 
-**<ins>after step 4 and 5 below</ins>**, since it is a debug build, you code change in the frontend will take effect immediately. open chrome's inspector, just do an `Empty Cache and Hard Reload` to load the new change(s).
+**<ins>after step 4 and 5 below</ins>**, since it is a debug build, you code change in the frontend will take effect immediately. open a chrome's inspector, just do an `Empty Cache and Hard Reload` to load the new change(s).
 
 <img src="./imgs/frontend-debug.png" alt="plugin" style="zoom: 50%;" />
 
@@ -38,11 +38,24 @@ cd [grafana installed path]
 choose `Mongodb-Grafana-Plugin`
 <img src="./imgs/datasource.png" alt="plugin" style="zoom: 50%;" />
 
-configure the mongodb connection parameters and the plug's backend url
+configure the mongodb connection parameters and the plugin's backend url
 <img src="./imgs/datasource-config.png" alt="plugin" style="zoom: 50%;" />
 
 6. run the `backend`
 
+```bash
+cd [repo path]/backend
+npm install
+```
+
 open the repo from visual studio code. the backend is in the `backend` folder. it is default hardcoded to use port number 4000 and a `launch.json` has been provided. just `Run | Start Debugging` from menu bar
 
 <img src="./imgs/backend-debug.png" alt="plugin" style="zoom: 50%;" />
+
+7. save the database connection
+
+go back to setp 5, click on the `Save & test` button
+
+hurray! you have everything set up.
+
+** query

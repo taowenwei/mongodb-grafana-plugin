@@ -8,29 +8,23 @@ app.use(express.json());
 
 // grafana: test datasource connect
 app.all("/", async (req, res) => {
-  // const client = new MongoClient(req.body.db.url);
-  // try {
-  //   await client.connect();
-  //   res.send({
-  //     status: "success",
-  //     display_status: "Success",
-  //     message: "MongoDB Connection test OK",
-  //   });
-  // } catch (err) {
-  //   res.send({
-  //     status: "error",
-  //     display_status: "Error",
-  //     message: "MongoDB Connection Error: " + err.message,
-  //   });
-  // } finally {
-  //   client.close();
-  // }
-
-  res.send({
-    status: "success",
-    display_status: "Success",
-    message: "MongoDB Connection test OK",
-  });
+  const client = new MongoClient(req.body.db.url);
+  try {
+    await client.connect();
+    res.send({
+      status: "success",
+      display_status: "Success",
+      message: "MongoDB Connection test OK",
+    });
+  } catch (err) {
+    res.send({
+      status: "error",
+      display_status: "Error",
+      message: "MongoDB Connection Error: " + err.message,
+    });
+  } finally {
+    client.close();
+  }
 });
 
 // grafana: qeury
