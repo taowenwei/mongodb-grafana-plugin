@@ -32,11 +32,10 @@ choose `Mongodb-Grafana-Plugin`
 
 <img src="./imgs/datasource.png" alt="plugin" style="zoom: 50%;" />
 
-configure the mongodb connection parameters and the plugin's backend url
+configure the mongodb connection parameters and the plugin's backend url. <span style="color:red;">**DON'T**</span> click the `Save & test` button yet. let's do it at step 7.
+
 
 <img src="./imgs/datasource-config.png" alt="plugin" style="zoom: 50%;" />
-
-DON'T click the `Save & test` button yet. let's do it at step 7.
 
 6. debug the frontend
 
