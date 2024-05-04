@@ -28,23 +28,23 @@ app.all("/", async (req, res) => {
 });
 
 // grafana: qeury
-app.all("/query", async (req, res) => {
-  const substitutions = Query.buildSubstitution(req);
-  const targets = req.body.targets;
-
-  const results = await Promise.all(
-    targets.map(async (target) => {
-      const queryArgs = Query.parseQuery(target.target, substitutions);
-      queryArgs.type = target.type;
-      const result = await Mongo.aggregate(
-        req.body.db.url,
-        req.body.db.db,
-        queryArgs
-      );
-      return result;
-    })
-  );
-  res.json(results);
+app.all("/query", async (req, res, next) => {
+  try {
+    const results = await Promise.all(
+      req.body.targets.map(async (target) => {
+        const queryArgs = Query.parseQuery(req, target);
+        const result = await Mongo.aggregate(
+          req.body.db.url,
+          req.body.db.db,
+          queryArgs
+        );
+        return result;
+      })
+    );
+    res.json(results);
+  } catch (err) {
+    next(err);
+  }
 });
 
 //default error handler
