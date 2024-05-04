@@ -16,3 +16,37 @@ the mongodb plugin is a full stack app. it has to, because a webapp can't use a 
 see installation steps [here](./INSTALL.md)
 
 ## query
+
+### query types
+
+there are two types of query the plugin supports, `table` or `timeserie`.
+
+<img src="./imgs/query-type.png" alt="frontend" style="width: 40%;" />
+
+### query schema
+```javascript
+  {
+    collection: "collection name",
+    aggregations: [
+      {
+        string: "string",
+        date: new Date(),
+        id: new ObjectId("573a1393f29313caabcdc50e"),
+        bool: true,
+        float: 12345.4,
+        expandable1: $from,
+        expandable2: $to,
+        expandable3: $intervalMs
+      },
+    ],
+  }
+```
+the `collection` field specifies the name of the collection to perform an aggregation.
+
+the `aggregations` field can have multiple aggregations. the supported data types and examples are listed above.
+
+`timeserie` in detail
+
+- `$from`, `$to`, `$intervalMs` are grafana expandable variables for using as a time boundary and an interval
+- `__name`, `__value`, `__timestamp` are the plugin's internal variables to construct a grafana timeserie data frame
+- example query can be found at [code](./sample/timeserie-query.json). all 6 parameters mentioned above are used.

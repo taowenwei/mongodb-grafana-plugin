@@ -1,0 +1,71 @@
+{
+  collection: "movies",
+  aggregations: [
+    {
+      $match: {
+        released: {
+          $gte: new Date($from),
+          $lte: new Date($to),
+        },
+      },
+    },
+    {
+      $group: {
+        _id: {
+          year: {
+            $year: "$released",
+          },
+          month: {
+            $month: "$released",
+          },
+        },
+        __value: {
+          $sum: 1,
+        },
+      },
+    },
+    {
+      $addFields: {
+        __name: { $literal: "movies in month" },
+        __timestamp: {
+          $dateFromString: {
+            dateString: {
+              $concat: [
+                {
+                  $toString: "$_id.year",
+                },
+                "-",
+                {
+                  $toString: {
+                    $cond: {
+                      if: {
+                        $lte: ["$_id.month", 9],
+                      },
+                      then: "0",
+                      else: "",
+                    },
+                  },
+                },
+                {
+                  $toString: "$_id.month",
+                },
+                "-01",
+              ],
+            },
+            format: "%Y-%m-%d",
+          },
+        },
+      },
+    },
+    {
+      $sort: {
+        __timestamp: 1,
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+      },
+    },
+  ],
+}
