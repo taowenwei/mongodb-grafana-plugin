@@ -2,9 +2,9 @@
 
 0. clone the repo
 
-1. download and install grafana locally from [here](https://grafana.com/grafana/download)
+1. download from [here](https://grafana.com/grafana/download) and install grafana locally 
 
-2. enable unsigned plugins (yes, the plugin is unsigned)
+2. grafana conf/defaults.ini, enable unsigned plugins (yes, the plugin is unsigned)
 
 <img src="./imgs/unsigned.png" alt="unsigned" style="zoom: 50%;" />
 
@@ -29,13 +29,15 @@ cd [grafana installed path]
 5. add and configure the datasource
 
 choose `Mongodb-Grafana-Plugin`
+
 <img src="./imgs/datasource.png" alt="plugin" style="zoom: 50%;" />
 
 configure the mongodb connection parameters and the plugin's backend url
+
 <img src="./imgs/datasource-config.png" alt="plugin" style="zoom: 50%;" />
 
 6. debug the frontend
-since it is a debug build, you code change in the frontend will take effect immediately. open a chrome's inspector, just do an `Empty Cache and Hard Reload` to load the new change(s). 
+since it is a debug build in step 3 `npm run dev`, you code change in the frontend will take effect immediately. open a chrome's inspector, just do an `Empty Cache and Hard Reload` to load the new change(s). 
 
 you will then be able to view the source, set breakpoints, step through the code; just like debugging any react.js apps
 
