@@ -17,31 +17,29 @@ const buildTimeseries = (docs) => {
 
 const buildTable = (docs) => {
   // build superset of columns
-  const columns = new Set();
-  for (const doc of docs) {
-    const keys = Object.keys(doc);
-    keys.forEach((key) => columns.add(key));
-  }
+  const columns = {};
+  docs.forEach((doc) =>
+    Object.keys(doc).forEach(
+      (key) => (columns[key] = { text: key, type: "string" })
+    )
+  );
 
   // build return rows
-  const rows = [];
-  for (const doc of docs) {
+  const rows = docs.map((doc) => {
     const row = [];
-    const keys = [...columns];
-    keys.forEach((key) => {
+    Object.keys(columns).forEach((key) => {
       if (key in doc) {
         row.push(doc[key]);
       } else {
         row.push(null);
       }
     });
-    rows.push(row);
-  }
+    return row;
+  });
 
   return {
-    columns: [...columns],
-    rows: rows,
-    type: "table",
+    columns: Object.values(columns),
+    rows,
   };
 };
 

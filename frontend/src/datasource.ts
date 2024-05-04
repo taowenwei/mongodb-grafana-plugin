@@ -54,46 +54,13 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
     try {
       const payload = {
         ...options,
-        db: {...this.db},
+        db: { ...this.db },
         targets: options.targets.filter((target) => !!target.queryType),
       };
       const response = (await this.request('/query', payload)) as FetchResponse<
         TimeSeriesResponse[] | TableResponse[]
       >;
-      const data = response.data;
-      const dqr = {
-        data: options.targets.map((target, index) => {
-          switch (target.queryType) {
-            case QueryType.timeserie:
-              {
-                const targetData = data[index] as TimeSeriesResponse;
-                const dataFrame = {
-                  name: targetData.target,
-                  fields: targetData.datapoints,
-                };
-                return dataFrame;
-              }
-              break;
-            case QueryType.table:
-            default:
-              {
-                const targetData = data[index] as TableResponse;
-                const dataFrame = {
-                  name: targetData.type,
-                  fields: targetData.rows.map((row) =>
-                    targetData.columns.map((col, index) => [
-                      col,
-                      (row as object[])[index],
-                    ]),
-                  ),
-                };
-                return dataFrame;
-              }
-              break;
-          }
-        }),
-      };
-      return dqr;
+      return { data: response.data };
     } catch (err) {
       let message = '';
       if (_.isString(err)) {
