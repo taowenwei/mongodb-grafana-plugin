@@ -10,8 +10,9 @@ app.use(cors());
 
 // grafana: test datasource connect
 app.all("/", async (req, res) => {
+  let client = null;
   try {
-    const client = new MongoClient(req.body.db.url);
+    client = new MongoClient(req.body.db.url);
     await client.connect();
     res.send({
       status: "success",
@@ -23,7 +24,7 @@ app.all("/", async (req, res) => {
       message: "MongoDB Connection Error: " + err.message,
     });
   } finally {
-    client.close();
+    client?.close();
   }
 });
 

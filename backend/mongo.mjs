@@ -52,10 +52,10 @@ const buildTable = (docs) => {
 };
 
 export const aggregate = async (uri, dbName, queryArgs) => {
-  const client = new MongoClient(uri);
   console.log(JSON.stringify(queryArgs, null, 2));
-
+  let client = null;
   try {
+    client = new MongoClient(uri);
     await client.connect();
     const db = client.db(dbName);
     const collection = db.collection(queryArgs.collection);
@@ -71,6 +71,6 @@ export const aggregate = async (uri, dbName, queryArgs) => {
         return buildTable(docs);
     }
   } finally {
-    client.close();
+    client?.close();
   }
 };
