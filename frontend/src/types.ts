@@ -1,22 +1,30 @@
 import { DataSourceJsonData } from '@grafana/data';
 import { DataQuery } from '@grafana/schema';
 
+export enum QueryType {
+  table = 'table',
+  timeserie = 'timeserie',
+}
+
 export interface MyQuery extends DataQuery {
-  queryText?: string;
-  constant: number;
+  queryText: string;
+  queryType: QueryType;
 }
 
-export const DEFAULT_QUERY: Partial<MyQuery> = {
-  constant: 6.5,
-};
-
-export interface DataPoint {
-  Time: number;
-  Value: number;
+export interface TimeSeriesResponse {
+  target: string;
+  datapoints: object[];
 }
 
-export interface DataSourceResponse {
-  datapoints: DataPoint[];
+export interface TableResponse {
+  type: string;
+  rows: object[];
+  columns: string[];
+}
+
+export interface ConnectionResponse {
+  status: string;
+  message: string;
 }
 
 /**
@@ -24,14 +32,11 @@ export interface DataSourceResponse {
  */
 export interface MyDataSourceOptions extends DataSourceJsonData {
   backendUri: string;
-
   mongoConnString: string;
-
   databaseName: string;
 }
 
 /**
  * Value that is used in the backend, but never sent over HTTP to the frontend
  */
-export interface MySecureJsonData {
-}
+export interface MySecureJsonData {}

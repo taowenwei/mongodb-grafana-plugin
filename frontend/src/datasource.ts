@@ -1,15 +1,19 @@
-import { getBackendSrv, isFetchError } from '@grafana/runtime';
+import { FetchResponse, getBackendSrv, isFetchError } from '@grafana/runtime';
 import {
   CoreApp,
   DataQueryRequest,
   DataQueryResponse,
   DataSourceApi,
   DataSourceInstanceSettings,
-  MutableDataFrame,
-  FieldType,
 } from '@grafana/data';
-
-import { MyQuery, MyDataSourceOptions, DEFAULT_QUERY, DataSourceResponse } from './types';
+import {
+  MyQuery,
+  MyDataSourceOptions,
+  TimeSeriesResponse,
+  TableResponse,
+  ConnectionResponse,
+  QueryType,
+} from './types';
 import { lastValueFrom } from 'rxjs';
 import _ from 'lodash';
 
@@ -21,8 +25,11 @@ interface PluginConfigs {
 export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
   baseUrl: string;
   db: PluginConfigs;
+  defaultErrorMessage = 'unknown error';
 
-  constructor(instanceSettings: DataSourceInstanceSettings<MyDataSourceOptions>) {
+  constructor(
+    instanceSettings: DataSourceInstanceSettings<MyDataSourceOptions>
+  ) {
     super(instanceSettings);
     this.baseUrl = instanceSettings.jsonData.backendUri;
     this.db = {
@@ -32,7 +39,10 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
   }
 
   getDefaultQuery(_: CoreApp): Partial<MyQuery> {
-    return DEFAULT_QUERY;
+    return {
+      queryText: '',
+      queryType: QueryType.timeserie,
+    };
   }
 
   filterQuery(query: MyQuery): boolean {
@@ -41,30 +51,73 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
   }
 
   async query(options: DataQueryRequest<MyQuery>): Promise<DataQueryResponse> {
-    const { range } = options;
-    const from = range!.from.valueOf();
-    const to = range!.to.valueOf();
-
-    // Return a constant for each query.
-    const data = options.targets.map((target) => {
-      return new MutableDataFrame({
-        refId: target.refId,
-        fields: [
-          { name: 'Time', values: [from, to], type: FieldType.time },
-          { name: 'Value', values: [target.constant, target.constant], type: FieldType.number },
-        ],
-      });
-    });
-
-    return { data };
+    options.targets = options.targets.filter((target) => !target.queryType);
+    try {
+      const response = (await this.request('/query', options)) as FetchResponse<
+        TimeSeriesResponse[] | TableResponse[]
+      >;
+      const data = response.data;
+      const dqr = {
+        data: options.targets.map((target, index) => {
+          switch (target.queryType) {
+            case QueryType.timeserie:
+              {
+                const targetData = data[index] as TimeSeriesResponse;
+                const dataFrame = {
+                  name: targetData.target,
+                  fields: targetData.datapoints,
+                };
+                return dataFrame;
+              }
+              break;
+            case QueryType.table:
+            default:
+              {
+                const targetData = data[index] as TableResponse;
+                const dataFrame = {
+                  name: targetData.type,
+                  fields: targetData.rows.map((row) =>
+                    targetData.columns.map((col, index) => [
+                      col,
+                      (row as object[])[index],
+                    ])
+                  ),
+                };
+                return dataFrame;
+              }
+              break;
+          }
+        }),
+      };
+      return dqr;
+    } catch (err) {
+      let message = '';
+      if (_.isString(err)) {
+        message = err;
+      } else if (isFetchError(err)) {
+        message =
+          'Fetch error: ' + (err.statusText ?? this.defaultErrorMessage);
+        if (err.data && err.data.error && err.data.error.code) {
+          message += ': ' + err.data.error.code + '. ' + err.data.error.message;
+        }
+      }
+      return { data: [], error: { message } };
+    }
   }
 
-  async request(url: string, body: object) {
-    const response = getBackendSrv().fetch<DataSourceResponse>({
+  async request(
+    url: string,
+    body: object
+  ): Promise<
+    FetchResponse<TimeSeriesResponse[] | TableResponse[] | ConnectionResponse>
+  > {
+    const response = getBackendSrv().fetch<
+      TimeSeriesResponse[] | TableResponse[] | ConnectionResponse
+    >({
       url: `${this.baseUrl}${url}`,
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
       data: JSON.stringify(body),
     });
@@ -75,10 +128,10 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
    * Checks whether we can connect to the API.
    */
   async testDatasource() {
-    const defaultErrorMessage = 'Cannot connect to API';
-
     try {
-      const response = await this.request('/', { db: this.db });
+      const response = (await this.request('/', {
+        db: this.db,
+      })) as FetchResponse<ConnectionResponse>;
       if (response.status === 200) {
         return {
           status: 'success',
@@ -87,7 +140,7 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
       } else {
         return {
           status: 'error',
-          message: response.statusText ? response.statusText : defaultErrorMessage,
+          message: response.data.message ?? this.defaultErrorMessage,
         };
       }
     } catch (err) {
@@ -95,7 +148,8 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
       if (_.isString(err)) {
         message = err;
       } else if (isFetchError(err)) {
-        message = 'Fetch error: ' + (err.statusText ? err.statusText : defaultErrorMessage);
+        message =
+          'Fetch error: ' + (err.statusText ?? this.defaultErrorMessage);
         if (err.data && err.data.error && err.data.error.code) {
           message += ': ' + err.data.error.code + '. ' + err.data.error.message;
         }

@@ -22,7 +22,7 @@ npm install
 npm run dev
 ```
 
-**<ins>after step 4 and 5 below</ins>**, since it is a debug build, you code change in the frontend will take effect immediately. open a chrome's inspector, just do an `Empty Cache and Hard Reload` to load the new change(s).
+**<ins>note: after step 4 and 5 below</ins>**, since it is a debug build, you code change in the frontend will take effect immediately. open a chrome's inspector, just do an `Empty Cache and Hard Reload` to load the new change(s).
 
 <img src="./imgs/frontend-debug.png" alt="plugin" style="zoom: 50%;" />
 

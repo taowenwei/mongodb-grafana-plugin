@@ -2,7 +2,7 @@ import express from "express";
 import { MongoClient } from "mongodb";
 import * as Query from "./query.mjs";
 import * as Mongo from "./mongo.mjs";
-import cors from 'cors';
+import cors from "cors";
 
 const app = express();
 app.use(express.json());
@@ -15,13 +15,11 @@ app.all("/", async (req, res) => {
     await client.connect();
     res.send({
       status: "success",
-      display_status: "Success",
       message: "MongoDB Connection test OK",
     });
   } catch (err) {
     res.send({
       status: "error",
-      display_status: "Error",
       message: "MongoDB Connection Error: " + err.message,
     });
   } finally {

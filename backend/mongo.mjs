@@ -10,7 +10,7 @@ const buildTimeseries = (docs) => {
     datapoints: [],
   };
   for (const doc of docs) {
-    row.datapoints.push(doc["__value"], doc["__timestamp"]);
+    row.datapoints.push([doc["__value"], doc["__timestamp"]]);
   }
   return row;
 };
