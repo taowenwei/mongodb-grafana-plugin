@@ -2,9 +2,9 @@
 
 0. clone the repo
 
-1. download from [here](https://grafana.com/grafana/download) and install grafana locally 
+1. download grafana from [here](https://grafana.com/grafana/download) and install it locally 
 
-2. grafana conf/defaults.ini, enable unsigned plugins (yes, the plugin is unsigned)
+2. grafana settings, conf/defaults.ini, enable unsigned plugins (yes, the plugin is unsigned)
 
 <img src="./imgs/unsigned.png" alt="unsigned" style="zoom: 50%;" />
 
@@ -36,7 +36,10 @@ configure the mongodb connection parameters and the plugin's backend url
 
 <img src="./imgs/datasource-config.png" alt="plugin" style="zoom: 50%;" />
 
+DON'T click the `Save & test` button yet. let's do it at step 7.
+
 6. debug the frontend
+
 since it is a debug build in step 3 `npm run dev`, you code change in the frontend will take effect immediately. open a chrome's inspector, just do an `Empty Cache and Hard Reload` to load the new change(s). 
 
 you will then be able to view the source, set breakpoints, step through the code; just like debugging any react.js apps
@@ -50,13 +53,13 @@ cd [repo path]/backend
 npm install
 ```
 
-open the repo from visual studio code. the backend is in the `backend` folder. it is default hardcoded to use port number 4000 and a `launch.json` has been provided. just `Run | Start Debugging` from menu bar
+open the repo from visual studio code. the backend is in the `backend` folder. it is default hardcoded to use port number 4000 and a `launch.json` has been provided. just `Run | Start Debugging` from menu bar. you can set a breakpoiint at [code](./backend/index.mjs#L15)
 
 <img src="./imgs/backend-debug.png" alt="plugin" style="zoom: 50%;" />
 
 7. save the database connection
 
-go back to setp 5, click on the `Save & test` button. 
+click on the `Save & test` button. your breakpoint in step 6 shall be triggered
 
 <img src="./imgs/config-done.png" alt="plugin" style="zoom: 50%;" />
 
