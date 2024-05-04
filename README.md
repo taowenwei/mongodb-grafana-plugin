@@ -41,6 +41,9 @@ there are two types of query the plugin supports, `table` or `timeserie`.
     ],
   }
 ```
+
+<img src="./imgs/query.png" alt="frontend" style="width: 40%;" />
+
 the `collection` field specifies the name of the collection to perform an aggregation.
 
 the `aggregations` field can have multiple aggregations. the supported data types and examples are listed above.
