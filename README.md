@@ -64,6 +64,8 @@ an example dashboard can be found at [here](./sample/dashboard.json)
 
 <img src="./imgs/dashboard.png" alt="frontend"/>
 
+courtesy from mongodb atlas's default `sample_mflix` database which collects movies from early 20th century all the way to 2016
+
 ## contribution
 
 you're welcomed to contribute to the repo in any way.
