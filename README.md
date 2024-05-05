@@ -17,6 +17,8 @@ see installation steps [here](./INSTALL.md)
 
 ## query
 
+th plugin supports all mongodb aggregation pipeline [operators](https://www.mongodb.com/docs/manual/reference/operator/aggregation/)
+
 ### query types
 
 there are two types of query the plugin supports, `table` or `timeserie`.
@@ -43,6 +45,8 @@ there are two types of query the plugin supports, `table` or `timeserie`.
 ```
 
 <img src="./imgs/query.png" alt="frontend" style="width: 40%;" />
+
+a query is a javascript object.
 
 the `collection` field specifies the name of the collection to perform an aggregation.
 
