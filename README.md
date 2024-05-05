@@ -2,15 +2,15 @@
 
 this repo tries to modernize the good work from the [mongodb-grafana](https://github.com/JamesOsgood/mongodb-grafana) repo.
 
-the mongodb plugin is a full stack app. it has to, because a webapp can't use a mongodb driver binary. it has,
+the mongodb plugin is a full stack app. it has to, because a webapp can't load a mongodb driver binary in a browser. the plugin has two parts,
 
 - a frontend
     - used by the grafana UI
-    - help configure the database connection and collect user queries
+    - help configure a database connection and collect user queries
 - a backend
     - run outside of grafana as a standalone node.js app
     - receive the queries from the frontend
-    - call mongodb driver to execute the queries
+    - call a mongodb driver to execute the queries
     - return as either tabular or timeseries data frames 
 ## installation
 see installation steps [here](./INSTALL.md)
@@ -35,7 +35,7 @@ there are two types of query the plugin supports, `table` or `timeserie`.
         date: new Date(),
         id: new ObjectId("573a1393f29313caabcdc50e"),
         bool: true,
-        float: 12345.4,
+        number: 12345.4,
         expandable1: $from,
         expandable2: $to,
         expandable3: $intervalMs
@@ -50,20 +50,20 @@ a query is a javascript object.
 
 the `collection` field specifies the name of the collection to perform an aggregation.
 
-the `aggregations` field can have multiple aggregations. the supported data types and examples are listed above.
+the `aggregations` field can have multiple aggregation steps. the supported data types are listed above.
 
 `timeserie` in detail
 
 - `$from`, `$to`, `$intervalMs` are grafana expandable variables for using as a time boundary and an interval
-- `__name`, `__value`, `__timestamp` are the plugin's internal variables to construct a grafana timeserie data frame
-- an example query can be found at [code](./sample/timeserie-query.json). all 6 parameters mentioned above are used. it `$group` by month and `$sum` how many movies were released during a month.
+- `__name`, `__value`, `__timestamp` are the plugin's internal variables to construct a named grafana timeserie data frame
+- an example query can be found at [code](./sample/timeserie-query.json). all 6 variables mentioned above are used. it `$group` by month and `$sum` how many movies were released during a month of a year.
 
 ## sample dashboard
 
 an example dashboard can be found at [here](./sample/dashboard.json)
 
-
 <img src="./imgs/dashboard.png" alt="frontend"/>
 
 ## contribution
+
 you're welcomed to contribute to the repo in any way.
