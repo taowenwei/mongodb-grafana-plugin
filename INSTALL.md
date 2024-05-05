@@ -63,3 +63,9 @@ click on the `Save & test` button. your breakpoint in step 6 shall be triggered
 <img src="./imgs/config-done.png" alt="plugin" style="zoom: 50%;" />
 
 hurray! you have everything set up.
+
+## product build
+
+frontend - run the `npm run build` for just once. the built product in the `dist` folder is good for grafana's future use
+
+backend - it's just an `express.js` app. run it localhost or in a cloud, aws apigateway + lambda can be an easy setup.
