@@ -13,6 +13,23 @@
             ],
             "program": "${workspaceFolder}/backend/index.mjs",
             "envFile": "${workspaceFolder}/backend/.envrc"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch sls Program",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "cwd": "${workspaceFolder}/backend",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": [
+                "run",
+                "sls-debug"
+            ],
+            "attachSimplePort": 9229,
+            "sourceMaps": true,
+            "envFile": "${workspaceFolder}/backend/.envrc"
         }
     ]
 }

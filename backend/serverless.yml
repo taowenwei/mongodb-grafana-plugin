@@ -1,0 +1,21 @@
+	
+service: lambda-mongo-grafana
+ 
+provider:
+  name: aws
+  runtime: nodejs16.x
+  stage: default
+  region: us-west-2
+	
+plugins:
+  - serverless-offline
+
+custom:
+  serverless-offline:
+    httpPort: 4000
+
+functions:
+  app:
+    handler: index-sls.handler
+    events:
+      - http: 'ANY /{ANY+}'
