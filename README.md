@@ -2,7 +2,7 @@
 
 this repo tries to modernize the good work from the [mongodb-grafana](https://github.com/JamesOsgood/mongodb-grafana) repo.
 
-the mongodb plugin is a full stack app. it has to, because a webapp can't load a mongodb driver binary in a browser. the plugin has two parts,
+the plugin is a grafana data source plugin. it is a full stack app, it has to, because a webapp can't load a mongodb driver binary in a browser.there are two parts in the plugin,
 
 - a frontend
     - used by the grafana UI
