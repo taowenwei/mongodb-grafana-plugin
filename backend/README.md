@@ -1,6 +1,8 @@
-# serverless to AWS lambda
+# ways of deployment
 
-## AWS setup
+## 1. AWS serverless (lambda)
+
+### setup
 
 you will need an aws api gateway and a new aws lambda function to begin with
 
@@ -16,4 +18,11 @@ sls package
 aws s3 cp ./serverless/lambda-mongo-grafana.zip s3://[bucket name]/[path key]
 
 aws lambda update-function-code --function-name [your lambda name] --s3-bucket [bucket name] --s3-key [path key] --region [region of your lambda]
+```
+
+## 2. Docker container
+
+```bash
+docker build -t mongo-grafana .
+docker run -d -p 4000:4000 mongo-grafana
 ```

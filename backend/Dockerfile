@@ -15,6 +15,7 @@ COPY . .
 
 # Expose port 4000 to the outside world
 EXPOSE 4000
+ENV PORT=4000
 
 # Command to run the application
 CMD ["node", "index.mjs"]
