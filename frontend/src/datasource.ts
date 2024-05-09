@@ -50,10 +50,14 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
 
   async query(options: DataQueryRequest<MyQuery>): Promise<DataQueryResponse> {
     try {
+      const { targets } = options;
       const payload = {
         ...options,
+        targets: targets.map((target) => ({
+          ...target,
+          queryText: `{collection: "${target.collection}", aggregations: ${target.queryText}}`,
+        })),
         db: { ...this.db },
-        targets: options.targets.filter((target) => !!target.queryType),
       };
       const response = (await this.request('/query', payload)) as FetchResponse<
         TimeSeriesResponse[] | TableResponse[]

@@ -16,9 +16,7 @@ import { lastValueFrom } from 'rxjs';
 
 type Props = QueryEditorProps<DataSource, MyQuery, MyDataSourceOptions>;
 
-const queryHint = `{
-  collection: "collection name",
-  aggregations: [
+const queryHint = `[
     {
       string: "string",
       date: new Date(),
@@ -28,9 +26,11 @@ const queryHint = `{
       expandable1: $from,
       expandable2: $to,
       expandable3: $intervalMs
-    },
-  ],
-}`;
+    }
+    {
+      ...more stages
+    }
+  ]`;
 
 export function QueryEditor(props: Props) {
   const {
@@ -56,19 +56,24 @@ export function QueryEditor(props: Props) {
             },
             data: JSON.stringify(db),
           });
-          const collections = await lastValueFrom(response);
-          setCollections(collections.data);
+          const values = await lastValueFrom(response);
+          const collections = values.data;
+          if (collections.length > 0) {
+            onChange({ ...query, collection: collections[0] });
+          }
+          setCollections(collections);
           setSpinner(false);
         } catch (err: any) {
           setErrorMsg(err?.message ?? err);
         }
       })();
     }
+    // eslint-disable-next-line
   }, [db, baseUrl]);
 
   const queryUI = (
     <Stack gap={0} direction="column">
-      <InlineField label="Type" labelWidth={16} tooltip="Not used yet">
+      <InlineField label="Type" labelWidth={20}>
         <Select
           width={20}
           options={[
@@ -79,7 +84,7 @@ export function QueryEditor(props: Props) {
           onChange={(sv) => onChange({ ...query, queryType: sv.value!! })}
         />
       </InlineField>
-      <InlineField label="Type" labelWidth={16} tooltip="Not used yet">
+      <InlineField label="Collection Name" labelWidth={20}>
         <Select
           width={50}
           options={collections.map((collection) => ({
@@ -90,7 +95,7 @@ export function QueryEditor(props: Props) {
           onChange={(sv) => onChange({ ...query, collection: sv.value!! })}
         />
       </InlineField>
-      <InlineField label="Query Text" labelWidth={16} tooltip="Not used yet">
+      <InlineField label="Aggregation Pipeline" labelWidth={20}>
         <TextArea
           style={{ width: 500, minHeight: 200 }}
           value={queryText ?? ''}

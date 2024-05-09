@@ -26,20 +26,15 @@ there are two types of query the plugin supports, `table` or `timeserie`.
 <img src="./imgs/query-type.png" alt="frontend" style="width: 40%;" />
 
 ### query schema
+
+after the frontend collects a query, it sends data of the following schema to its backend
 ```javascript
   {
     collection: "collection name",
     aggregations: [
       {
-        string: "string",
-        date: new Date(),
-        id: new ObjectId("573a1393f29313caabcdc50e"),
-        bool: true,
-        number: 12345.4,
-        expandable1: $from,
-        expandable2: $to,
-        expandable3: $intervalMs
-      },
+        pipeline stage (s)
+      }
     ],
   }
 ```
@@ -48,11 +43,22 @@ there are two types of query the plugin supports, `table` or `timeserie`.
 
 a query is a `javascript` object.
 
-the `collection` field specifies the name of the collection to perform an aggregation.
+the `Collection Name` field specifies the name of the collection to perform an aggregation.
 
-the `aggregations` field can have multiple aggregation steps. the supported data types are listed above.
+the `Aggregation Pipeline` field can have multiple aggregation steps. if you're familiar with `MongoDB Compass`, you can contruct your aggregations in the tool, then copy/paste the aggregration's `Node.js` export to the field - it's just simple as that. the supported data types are listed below.
 
-`timeserie` in detail
+```
+  string: "string",
+  date: new Date(),
+  id: new ObjectId("573a1393f29313caabcdc50e"),
+  bool: true,
+  number: 12345.4,
+  expandable1: $from,
+  expandable2: $to,
+  expandable3: $intervalMs
+```
+
+### `timeserie` in detail
 
 - `$from`, `$to`, `$intervalMs` are grafana expandable variables for using as a time boundary and an interval
 - `__name`, `__value`, `__timestamp` are the plugin's internal variables to construct a named grafana timeserie data frame
