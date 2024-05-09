@@ -1,6 +1,6 @@
 import express from "express";
 import serverless from "serverless-http";
-import { dbConfig, dbQuery } from "./express.mjs";
+import { dbConfig, dbQuery, dbCollections } from "./express.mjs";
 
 const app = express();
 app.use(express.json());
@@ -17,6 +17,9 @@ app.all(`${awsApiGatewayRoute}/`, dbConfig);
 
 // grafana: qeury
 app.all(`${awsApiGatewayRoute}/query`, dbQuery);
+
+// grafana: getall collection names
+app.all(`${awsApiGatewayRoute}/collections`, dbCollections);
 
 //default error handler
 app.use((err, req, res, next) => {

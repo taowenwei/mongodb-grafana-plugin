@@ -1,4 +1,4 @@
-import { FetchResponse, getBackendSrv, isFetchError } from '@grafana/runtime';
+import { FetchResponse, getBackendSrv } from '@grafana/runtime';
 import {
   CoreApp,
   DataQueryRequest,
@@ -15,7 +15,6 @@ import {
   QueryType,
 } from './types';
 import { lastValueFrom } from 'rxjs';
-import _ from 'lodash';
 
 interface PluginConfigs {
   url: string;
@@ -25,7 +24,6 @@ interface PluginConfigs {
 export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
   baseUrl: string;
   db: PluginConfigs;
-  defaultErrorMessage = 'unknown error';
 
   constructor(
     instanceSettings: DataSourceInstanceSettings<MyDataSourceOptions>,
@@ -61,18 +59,8 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
         TimeSeriesResponse[] | TableResponse[]
       >;
       return { data: response.data };
-    } catch (err) {
-      let message = '';
-      if (_.isString(err)) {
-        message = err;
-      } else if (isFetchError(err)) {
-        message =
-          'Fetch error: ' + (err.statusText ?? this.defaultErrorMessage);
-        if (err.data && err.data.error && err.data.error.code) {
-          message += ': ' + err.data.error.code + '. ' + err.data.error.message;
-        }
-      }
-      return { data: [], error: { message } };
+    } catch (err: any) {
+      return { data: [], error: { message: err?.message ?? err } };
     }
   }
 
@@ -111,23 +99,13 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
       } else {
         return {
           status: 'error',
-          message: response.data.message ?? this.defaultErrorMessage,
+          message: response.data.message ?? 'unknown',
         };
       }
-    } catch (err) {
-      let message = '';
-      if (_.isString(err)) {
-        message = err;
-      } else if (isFetchError(err)) {
-        message =
-          'Fetch error: ' + (err.statusText ?? this.defaultErrorMessage);
-        if (err.data && err.data.error && err.data.error.code) {
-          message += ': ' + err.data.error.code + '. ' + err.data.error.message;
-        }
-      }
+    } catch (err: any) {
       return {
         status: 'error',
-        message,
+        message: err?.message ?? err,
       };
     }
   }

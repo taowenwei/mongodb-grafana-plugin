@@ -41,3 +41,18 @@ export const dbQuery = async (req, res, next) => {
     next(err);
   }
 };
+
+// grafana: getall collection names
+export const dbCollections = async (req, res) => {
+  const { url, db } = req.body;
+  let client = null;
+  try {
+    client = new MongoClient(url);
+    await client.connect();
+    const cursor = await client.db(db).listCollections().toArray();
+    const collections = cursor.map((collection) => collection.name);
+    res.json(collections);
+  } finally {
+    client?.close();
+  }
+};

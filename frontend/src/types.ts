@@ -7,6 +7,7 @@ export enum QueryType {
 }
 
 export interface MyQuery extends DataQuery {
+  collection: string;
   queryText: string;
   queryType: QueryType;
 }

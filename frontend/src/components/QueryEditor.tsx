@@ -1,8 +1,18 @@
 import React from 'react';
-import { InlineField, TextArea, Stack, Select } from '@grafana/ui';
+import {
+  InlineField,
+  TextArea,
+  Stack,
+  Select,
+  Modal,
+  Button,
+  Spinner,
+} from '@grafana/ui';
 import { QueryEditorProps } from '@grafana/data';
 import { DataSource } from '../datasource';
 import { MyDataSourceOptions, MyQuery, QueryType } from '../types';
+import { getBackendSrv } from '@grafana/runtime';
+import { lastValueFrom } from 'rxjs';
 
 type Props = QueryEditorProps<DataSource, MyQuery, MyDataSourceOptions>;
 
@@ -22,10 +32,41 @@ const queryHint = `{
   ],
 }`;
 
-export function QueryEditor({ query, onChange, onRunQuery }: Props) {
-  const { queryText, queryType } = query;
+export function QueryEditor(props: Props) {
+  const {
+    query,
+    datasource: { baseUrl, db },
+    onChange,
+    onRunQuery,
+  } = props;
+  const { collection, queryText, queryType } = query;
+  const [collections, setCollections] = React.useState<string[]>([]);
+  const [spinner, setSpinner] = React.useState(true);
+  const [errorMsg, setErrorMsg] = React.useState('');
 
-  return (
+  React.useEffect(() => {
+    if (!!db && !!baseUrl) {
+      (async () => {
+        try {
+          const response = await getBackendSrv().fetch<string[]>({
+            url: `${baseUrl}/collections`,
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            data: JSON.stringify(db),
+          });
+          const collections = await lastValueFrom(response);
+          setCollections(collections.data);
+          setSpinner(false);
+        } catch (err: any) {
+          setErrorMsg(err?.message ?? err);
+        }
+      })();
+    }
+  }, [db, baseUrl]);
+
+  const queryUI = (
     <Stack gap={0} direction="column">
       <InlineField label="Type" labelWidth={16} tooltip="Not used yet">
         <Select
@@ -38,9 +79,20 @@ export function QueryEditor({ query, onChange, onRunQuery }: Props) {
           onChange={(sv) => onChange({ ...query, queryType: sv.value!! })}
         />
       </InlineField>
+      <InlineField label="Type" labelWidth={16} tooltip="Not used yet">
+        <Select
+          width={50}
+          options={collections.map((collection) => ({
+            label: collection,
+            value: collection,
+          }))}
+          value={collection}
+          onChange={(sv) => onChange({ ...query, collection: sv.value!! })}
+        />
+      </InlineField>
       <InlineField label="Query Text" labelWidth={16} tooltip="Not used yet">
         <TextArea
-          style={{ width: 500, minHeight:200 }}
+          style={{ width: 500, minHeight: 200 }}
           value={queryText ?? ''}
           placeholder={queryHint}
           onChange={(event) => {
@@ -54,4 +106,18 @@ export function QueryEditor({ query, onChange, onRunQuery }: Props) {
       </InlineField>
     </Stack>
   );
+
+  const loadingUI = (
+    <Stack gap={0} direction="column">
+      <Spinner />
+      <Modal title="error" isOpen={!!errorMsg}>
+        {errorMsg}
+        <Modal.ButtonRow>
+          <Button onClick={() => setErrorMsg('')}>Ok</Button>
+        </Modal.ButtonRow>
+      </Modal>
+    </Stack>
+  );
+
+  return spinner ? loadingUI : queryUI;
 }
