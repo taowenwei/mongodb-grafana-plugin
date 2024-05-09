@@ -27,7 +27,8 @@ there are two types of query the plugin supports, `table` or `timeserie`.
 
 ### query schema
 
-after the frontend collects a query, it sends data of the following schema to its backend
+after the frontend UI collects a query, it transforms and sends data of the following schema to its backend. an example query payload to the backend can be found at [code](./sample/timeserie-query.json)
+
 ```javascript
   {
     collection: "collection name",
@@ -41,11 +42,11 @@ after the frontend collects a query, it sends data of the following schema to it
 
 <img src="./imgs/query.png" alt="frontend" style="width: 40%;" />
 
-a query is a `javascript` object.
+a query is a `javascript` object, NOT a `json` object.
 
-the `Collection Name` field specifies the name of the collection to perform an aggregation.
+the `Collection Name` field, (mapped to `collection` in the above payload), specifies the name of the collection to perform an aggregation.
 
-the `Aggregation Pipeline` field can have multiple aggregation steps. if you're familiar with `MongoDB Compass`, you can contruct your aggregations in the tool, then copy/paste the aggregration's `Node.js` export to the field - it's just simple as that. the supported data types are listed below.
+the `Aggregation Pipeline` field, (mapped to `aggregations`), can have multiple aggregation steps. if you're familiar with `MongoDB Compass`, you can contruct your aggregations in the tool, then copy/paste the aggregration's `Node.js` export to the field - it's just simple as that. the supported data types are listed below.
 
 ```
   string: "string",
@@ -62,7 +63,7 @@ the `Aggregation Pipeline` field can have multiple aggregation steps. if you're 
 
 - `$from`, `$to`, `$intervalMs` are grafana expandable variables for using as a time boundary and an interval
 - `__name`, `__value`, `__timestamp` are the plugin's internal variables to construct a named grafana timeserie data frame
-- an example query can be found at [code](./sample/timeserie-query.json). all 6 variables mentioned above are used. it `$group` by month and `$sum` how many movies were released during a month of a year.
+- in [this](./sample/timeserie-query.json) example and in its `aggregations` array, all 6 variables mentioned above are used. it `$group` by month and `$sum` how many movies were released during a month of a year.
 
 ## sample dashboard
 
