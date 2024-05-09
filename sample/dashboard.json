@@ -68,7 +68,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "red"
+                "color": "red",
+                "value": null
               },
               {
                 "color": "red",
@@ -101,11 +102,12 @@
       "pluginVersion": "10.4.2",
       "targets": [
         {
+          "collection": "movies",
           "datasource": {
             "type": "mongodb-grafana-datasource",
             "uid": "fdkn0wi0apkw0c"
           },
-          "queryText": "{\n  collection: \"movies\",\n  aggregations: [\n    {\n      $match: {\n        released: {\n          $gte: new Date($from),\n          $lte: new Date($to),\n        },\n      },\n    },\n    {\n      $group: {\n        _id: {\n          year: {\n            $year: \"$released\",\n          },\n          month: {\n            $month: \"$released\",\n          },\n        },\n        __value: {\n          $sum: 1,\n        },\n      },\n    },\n    {\n      $addFields: {\n        __name: { $literal: \"movies in month\" },\n        __timestamp: {\n          $dateFromString: {\n            dateString: {\n              $concat: [\n                {\n                  $toString: \"$_id.year\",\n                },\n                \"-\",\n                {\n                  $toString: {\n                    $cond: {\n                      if: {\n                        $lte: [\"$_id.month\", 9],\n                      },\n                      then: \"0\",\n                      else: \"\",\n                    },\n                  },\n                },\n                {\n                  $toString: \"$_id.month\",\n                },\n                \"-01\",\n              ],\n            },\n            format: \"%Y-%m-%d\",\n          },\n        },\n      },\n    },\n    {\n      $sort: {\n        __timestamp: 1,\n      },\n    },\n    {\n      $project: {\n        _id: 0,\n      },\n    },\n  ],\n}",
+          "queryText": "[\n    {\n      $match: {\n        released: {\n          $gte: new Date($from),\n          $lte: new Date($to),\n        },\n      },\n    },\n    {\n      $group: {\n        _id: {\n          year: {\n            $year: \"$released\",\n          },\n          month: {\n            $month: \"$released\",\n          },\n        },\n        __value: {\n          $sum: 1,\n        },\n      },\n    },\n    {\n      $addFields: {\n        __name: { $literal: \"movies in month\" },\n        __timestamp: {\n          $dateFromString: {\n            dateString: {\n              $concat: [\n                {\n                  $toString: \"$_id.year\",\n                },\n                \"-\",\n                {\n                  $toString: {\n                    $cond: {\n                      if: {\n                        $lte: [\"$_id.month\", 9],\n                      },\n                      then: \"0\",\n                      else: \"\",\n                    },\n                  },\n                },\n                {\n                  $toString: \"$_id.month\",\n                },\n                \"-01\",\n              ],\n            },\n            format: \"%Y-%m-%d\",\n          },\n        },\n      },\n    },\n    {\n      $sort: {\n        __timestamp: 1,\n      },\n    },\n    {\n      $project: {\n        _id: 0,\n      },\n    },\n  ]",
           "queryType": "timeserie",
           "refId": "A"
         }
@@ -160,7 +162,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -192,21 +195,23 @@
       },
       "targets": [
         {
+          "collection": "movies",
           "datasource": {
             "type": "mongodb-grafana-datasource",
             "uid": "fdkn0wi0apkw0c"
           },
-          "queryText": "{\n  collection: \"movies\",\n  aggregations: [\n    {\n      $match: {\n        released: {\n          $gte: new Date($from),\n          $lte: new Date($to),\n        },\n      },\n    },\n    {\n      $group: {\n        _id: {\n          year: {\n            $year: \"$released\",\n          },\n          month: {\n            $month: \"$released\",\n          },\n        },\n        __value: {\n          $sum: 1,\n        },\n      },\n    },\n    {\n      $addFields: {\n        __name: { $literal: \"movies in month\" },\n        __timestamp: {\n          $dateFromString: {\n            dateString: {\n              $concat: [\n                {\n                  $toString: \"$_id.year\",\n                },\n                \"-\",\n                {\n                  $toString: {\n                    $cond: {\n                      if: {\n                        $lte: [\"$_id.month\", 9],\n                      },\n                      then: \"0\",\n                      else: \"\",\n                    },\n                  },\n                },\n                {\n                  $toString: \"$_id.month\",\n                },\n                \"-01\",\n              ],\n            },\n            format: \"%Y-%m-%d\",\n          },\n        },\n      },\n    },\n    {\n      $sort: {\n        __timestamp: 1,\n      },\n    },\n    {\n      $project: {\n        _id: 0,\n      },\n    },\n  ],\n}",
+          "queryText": "[\n  {\n    $match: {\n      released: {\n        $gte: new Date($from),\n        $lte: new Date($to),\n      },\n    },\n  },\n  {\n    $group: {\n      _id: {\n        year: {\n          $year: \"$released\",\n        },\n        month: {\n          $month: \"$released\",\n        },\n      },\n      __value: {\n        $sum: 1,\n      },\n    },\n  },\n  {\n    $addFields: {\n      __name: { $literal: \"movies in month\" },\n      __timestamp: {\n        $dateFromString: {\n          dateString: {\n            $concat: [\n              {\n                $toString: \"$_id.year\",\n              },\n              \"-\",\n              {\n                $toString: {\n                  $cond: {\n                    if: {\n                      $lte: [\"$_id.month\", 9],\n                    },\n                    then: \"0\",\n                    else: \"\",\n                  },\n                },\n              },\n              {\n                $toString: \"$_id.month\",\n              },\n              \"-01\",\n            ],\n          },\n          format: \"%Y-%m-%d\",\n        },\n      },\n    },\n  },\n  {\n    $sort: {\n      __timestamp: 1,\n    },\n  },\n  {\n    $project: {\n      _id: 0,\n    },\n  },\n]\n",
           "queryType": "timeserie",
           "refId": "A"
         },
         {
+          "collection": "movies",
           "datasource": {
             "type": "mongodb-grafana-datasource",
             "uid": "fdkn0wi0apkw0c"
           },
           "hide": false,
-          "queryText": "{\n  \"collection\": \"movies\",\n  \"aggregations\": [\n    {\n      \"$match\": {\n        \"released\": {\n          \"$gte\": $from,\n          \"$lte\": $to\n        },\n        \"genres\": { \"$elemMatch\": { \"$eq\": \"Comedy\" } }\n      }\n    },\n    {\n      \"$group\": {\n        \"_id\": {\n          \"year\": { \"$year\": \"$released\" },\n          \"month\": { \"$month\": \"$released\" }\n        },\n        \"__value\": { \"$sum\": 1 }\n      }\n    },\n    {\n      \"$addFields\": {\n        \"__name\": { \"$literal\": \"genre\" },\n        \"__timestamp\": {\n          \"$dateFromString\": {\n            \"dateString\": {\n              \"$concat\": [\n                { \"$toString\": \"$_id.year\" },\n                \"-\",\n                {\n                  \"$toString\": {\n                    \"$cond\": {\n                      \"if\": { \"$lte\": [\"$_id.month\", 9] },\n                      \"then\": \"0\",\n                      \"else\": \"\"\n                    }\n                  }\n                },\n                { \"$toString\": \"$_id.month\" },\n                \"-01\"\n              ]\n            },\n            \"format\": \"%Y-%m-%d\"\n          }\n        }\n      }\n    },\n    {\n      \"$sort\": { \"__timestamp\": 1 }\n    },\n    {\n      \"$project\": { \"_id\": 0 }\n    }\n  ]\n}\n",
+          "queryText": " [\n    {\n      \"$match\": {\n        \"released\": {\n          \"$gte\": $from,\n          \"$lte\": $to\n        },\n        \"genres\": { \"$elemMatch\": { \"$eq\": \"Comedy\" } }\n      }\n    },\n    {\n      \"$group\": {\n        \"_id\": {\n          \"year\": { \"$year\": \"$released\" },\n          \"month\": { \"$month\": \"$released\" }\n        },\n        \"__value\": { \"$sum\": 1 }\n      }\n    },\n    {\n      \"$addFields\": {\n        \"__name\": { \"$literal\": \"genre\" },\n        \"__timestamp\": {\n          \"$dateFromString\": {\n            \"dateString\": {\n              \"$concat\": [\n                { \"$toString\": \"$_id.year\" },\n                \"-\",\n                {\n                  \"$toString\": {\n                    \"$cond\": {\n                      \"if\": { \"$lte\": [\"$_id.month\", 9] },\n                      \"then\": \"0\",\n                      \"else\": \"\"\n                    }\n                  }\n                },\n                { \"$toString\": \"$_id.month\" },\n                \"-01\"\n              ]\n            },\n            \"format\": \"%Y-%m-%d\"\n          }\n        }\n      }\n    },\n    {\n      \"$sort\": { \"__timestamp\": 1 }\n    },\n    {\n      \"$project\": { \"_id\": 0 }\n    }\n  ]\n",
           "queryType": "timeserie",
           "refId": "B"
         }
@@ -243,7 +248,9 @@
       },
       "id": 5,
       "options": {
-        "displayLabels": ["name"],
+        "displayLabels": [
+          "name"
+        ],
         "legend": {
           "displayMode": "list",
           "placement": "bottom",
@@ -251,7 +258,9 @@
         },
         "pieType": "pie",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": true
         },
@@ -263,11 +272,12 @@
       "pluginVersion": "10.4.2",
       "targets": [
         {
+          "collection": "movies",
           "datasource": {
             "type": "mongodb-grafana-datasource",
             "uid": "fdkn0wi0apkw0c"
           },
-          "queryText": "{\n  \"collection\": \"movies\",\n  \"aggregations\": [\n    {\n      \"$unwind\": {\n        \"path\": \"$genres\"\n      }\n    },\n    {\n      \"$project\": {\n        \"genres\": 1\n      }\n    },\n    {\n      \"$group\": {\n        \"_id\": \"$genres\",\n        \"__value\": {\n          \"$sum\": 1\n        }\n      }\n    }\n  ]\n}",
+          "queryText": "[\n  {\n    \"$unwind\": {\n      \"path\": \"$genres\"\n    }\n  },\n  {\n    \"$project\": {\n      \"genres\": 1\n    }\n  },\n  {\n    \"$group\": {\n      \"_id\": \"$genres\",\n      \"__value\": {\n        \"$sum\": 1\n      }\n    }\n  }\n]",
           "queryType": "table",
           "refId": "A"
         }
@@ -311,7 +321,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -334,7 +345,9 @@
         "footer": {
           "countRows": false,
           "fields": "",
-          "reducer": ["sum"],
+          "reducer": [
+            "sum"
+          ],
           "show": false
         },
         "showHeader": true
@@ -342,11 +355,12 @@
       "pluginVersion": "10.4.2",
       "targets": [
         {
+          "collection": "movies",
           "datasource": {
             "type": "mongodb-grafana-datasource",
             "uid": "fdkn0wi0apkw0c"
           },
-          "queryText": "{\n  collection: \"movies\",\n  aggregations: [\n    {\n      '$match': {\n        'released': {\n          '$gte': new Date('Sat, 01 Jan 2000 00:00:00 GMT'), \n          '$lte': new Date('Tue, 01 Jan 2002 00:00:00 GMT')\n        }\n      }\n    }, {\n      '$project': {\n        'title': 1, \n        'year': 1, \n        'plot': 1\n      }\n    }\n  ]\n}",
+          "queryText": "[\n  {\n    '$match': {\n      'released': {\n        '$gte': new Date('Sat, 01 Jan 2000 00:00:00 GMT'), \n        '$lte': new Date('Tue, 01 Jan 2002 00:00:00 GMT')\n      }\n    }\n  }, {\n    '$project': {\n      'title': 1, \n      'year': 1, \n      'plot': 1\n    }\n  }\n]",
           "queryType": "table",
           "refId": "A"
         }
@@ -355,6 +369,7 @@
       "type": "table"
     }
   ],
+  "refresh": "",
   "schemaVersion": 39,
   "tags": [],
   "templating": {
@@ -368,6 +383,6 @@
   "timezone": "browser",
   "title": "mflix",
   "uid": "bdkpj0btmpr7kc",
-  "version": 19,
+  "version": 31,
   "weekStart": ""
 }
