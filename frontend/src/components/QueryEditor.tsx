@@ -58,7 +58,7 @@ export function QueryEditor(props: Props) {
           });
           const values = await lastValueFrom(response);
           const collections = values.data;
-          if (collections.length > 0) {
+          if (!collection && collections.length > 0) {
             onChange({ ...query, collection: collections[0] });
           }
           setCollections(collections);

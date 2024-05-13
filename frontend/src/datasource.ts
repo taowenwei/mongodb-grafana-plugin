@@ -38,6 +38,7 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
 
   getDefaultQuery(_: CoreApp): Partial<MyQuery> {
     return {
+      collection: '',
       queryText: '',
       queryType: QueryType.timeserie,
     };
